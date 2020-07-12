@@ -748,7 +748,18 @@ build_package_truffleruby() {
   build_package_copy
 
   cd "${PREFIX_PATH}"
-  "${PREFIX_PATH}/lib/truffle/post_install_hook.sh"
+  "${PREFIX_PATH}/lib/truffle/post_install_hook.sh" || return $?
+}
+
+build_package_graalvm() {
+  build_package_copy
+
+  cd "${PREFIX_PATH}"
+  bin/gu install ruby || return $?
+
+  local ruby_home
+	ruby_home=$(bin/ruby -e 'print RbConfig::CONFIG["prefix"]')
+	"$ruby_home/lib/truffle/post_install_hook.sh" || return $?
 }
 
 build_package_artichoke() {
